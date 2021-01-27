@@ -1,6 +1,7 @@
 import {http} from 'vue'
-import AWS from 'aws-sdk'
+// import AWS from 'aws-sdk'
 import _ from 'lodash'
+import Sequelize from 'sequelize'
 
 export const initAPI = () => {
   const ROOT = '/'
@@ -22,7 +23,9 @@ export const initAPI = () => {
   })
 }
 
-var dynamodb
+// var dynamodb
+// var sequelize
+var test
 
 export const api = (type = 'get', url, ...tail) => {
   return http[type](url, ...tail)
@@ -34,72 +37,86 @@ export const api = (type = 'get', url, ...tail) => {
     })
 }
 
-export const connect = (host, accessKey, accessSecret) => {
-  AWS.config.update({
-    region: 'cn-north',
-    endpoint: 'http://' + host,
-    accessKeyId: accessKey,
-    secretAccessKey: accessSecret
-  })
-
-  dynamodb = new AWS.DynamoDB()
+export const connect = (hostName, accessKey, accessSecret) => {
+ // const sequelize =
+  const sequelize = new Sequelize('database', accessKey, accessSecret, {
+    host: hostName, port: '3306', dialect: 'mysql',
+    pool: {
+      max: 5,
+      min: 0,
+      idle: 10000
+    }
+  }
+     )
+  test = sequelize.BIGINT
+  console.log(test)
+  // console.log("test")
+  // AWS.config.update({
+  //   region: 'cn-north',
+  //   endpoint: 'http://' + host,
+  //   accessKeyId: accessKey,
+  //   secretAccessKey: accessSecret
+  // })
+  //
+  // dynamodb = new AWS.DynamoDB()
 }
 
 export const scan = (tableName, lastEvaluatedKey) => {
-  return new Promise(function (resolve, reject) {
-    dynamodb.scan({
-      TableName: tableName,
-      Limit: 20,
-      ExclusiveStartKey: lastEvaluatedKey
-    }, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-      } else {
-        resolve(data)
-      }
-    })
-  })
+  console.log(test)
+  // return new Promise(function (resolve, reject) {
+  //   dynamodb.scan({
+  //     TableName: tableName,
+  //     Limit: 20,
+  //     ExclusiveStartKey: lastEvaluatedKey
+  //   }, function (err, data) {
+  //     if (err) {
+  //       console.log(err, err.stack)
+  //     } else {
+  //       resolve(data)
+  //     }
+  //   })
+  // })
 }
 
 export const record = (tableName, payload) => {
-  return new Promise(function (resolve, reject) {
-    dynamodb.getItem({
-      TableName: tableName,
-      Key: payload
-    }, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-      } else {
-        resolve(data)
-      }
-    })
-  })
+  // return new Promise(function (resolve, reject) {
+  //   dynamodb.getItem({
+  //     TableName: tableName,
+  //     Key: payload
+  //   }, function (err, data) {
+  //     if (err) {
+  //       console.log(err, err.stack)
+  //     } else {
+  //       resolve(data)
+  //     }
+  //   })
+  // })
 }
 
 export const info = (tableName) => {
-  return new Promise(function (resolve, reject) {
-    dynamodb.describeTable({
-      TableName: tableName
-    }, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-      } else {
-        resolve(data)
-      }
-    })
-  })
+  // return new Promise(function (resolve, reject) {
+  //   dynamodb.describeTable({
+  //     TableName: tableName
+  //   }, function (err, data) {
+  //     if (err) {
+  //       console.log(err, err.stack)
+  //     } else {
+  //       resolve(data)
+  //     }
+  //   })
+  // })
 }
 
 export const list = () => {
-  return new Promise(function (resolve, reject) {
-    dynamodb.listTables({}, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-      } else {
-        resolve(data)
-      }
-    })
-  })
+  // return new Promise(function (resolve, reject) {
+  //   dynamodb.listTables({}, function (err, data) {
+  //     if (err) {
+  //       console.log(err, err.stack)
+  //     } else {
+  //       resolve(data)
+  //     }
+  //   })
+  // })
 }
 
 export const query = (tableName, indexName, hashKey, rangeKey, hashValue, rangeValue) => {
@@ -136,13 +153,13 @@ export const query = (tableName, indexName, hashKey, rangeKey, hashValue, rangeV
     queryExpression['IndexName'] = indexName
   }
   console.log(queryExpression)
-  return new Promise(function (resolve, reject) {
-    dynamodb.query(queryExpression, function (err, data) {
-      if (err) {
-        console.log(err, err.stack)
-      } else {
-        resolve(data)
-      }
-    })
-  })
+  // return new Promise(function (resolve, reject) {
+  //   dynamodb.query(queryExpression, function (err, data) {
+  //     if (err) {
+  //       console.log(err, err.stack)
+  //     } else {
+  //       resolve(data)
+  //     }
+  //   })
+  // })
 }
